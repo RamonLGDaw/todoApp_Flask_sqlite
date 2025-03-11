@@ -9,7 +9,7 @@
 
 <body>
     <h1>ToDoApp Flask_sqlite</h1>
-    <form action="datos" method="post">
+    <form action="/datos" method="post">
         <input type="text" name="task" placeholder="Enter a task">
         <button type="submit">send</button>
     </form>
@@ -32,7 +32,7 @@
 
 
         async function getData() {
-            const url = "http://127.0.0.1:5000/recuperar_datos";
+            const url = "https://todoapp-flask-sqlite.onrender.com/recuperar_datos";
             let data = []
             try {
                 const response = await fetch(url);
@@ -55,7 +55,7 @@
                 li.innerHTML = `<h4 id="${data[i]['id']}">Task: ${data[i]['task']} <button onclick="delete_row(${data[i]['id']})">delete</button><button onclick="update_row(${data[i]['id']})">Edit</button></h4>
                 
                 <div id="edit_form_${data[i]['id']}" style= "display:none">
-                    <form action="update_data" method="post">
+                    <form action="/update_data" method="post">
                         <input type="text" name="edit_task" value="${data[i]['task']}">
                         <input type="number" name="edit_id" value="${data[i]['id']}" style= "display:none">
                         <button type="submit">update</button> 
@@ -76,7 +76,7 @@
 
 
         function delete_row(id) {
-            fetch('http://127.0.0.1:5000/eliminar_datos', {
+            fetch('https://todoapp-flask-sqlite.onrender.com/eliminar_datos', {
                 method: 'POST', // Método HTTP
                 headers: {
                     'Content-Type': 'application/json' // Tipo de contenido
