@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoApp Flask_sqlite</title>
+</head>
+
+<body>
+    <h1>ToDoApp Flask_sqlite</h1>
+    <form action="datos" method="post">
+        <input type="text" name="task" placeholder="Enter a task">
+        <button type="submit">send</button>
+    </form>
+
+    
+    <ul id="lista_datos"></ul>
+
+   
+
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            getData()
+        });
+
+        let data = undefined
+       
+
+
+        async function getData() {
+            const url = "http://127.0.0.1:5000/recuperar_datos";
+            let data = []
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error(error.message);
+            }
+
+
+            let lista = document.getElementById('lista_datos');
+            lista.innerHTML = '';
+            for ( i = 0; i < data.length; i++) {
+
+                let li = document.createElement('li');
+                li.innerHTML = `<h4 id="${data[i]['id']}">Task: ${data[i]['task']} <button onclick="delete_row(${data[i]['id']})">delete</button><button onclick="update_row(${data[i]['id']})">Edit</button></h4>
+                
+                <div id="edit_form_${data[i]['id']}" style= "display:none">
+                    <form action="update_data" method="post">
+                        <input type="text" name="edit_task" value="${data[i]['task']}">
+                        <input type="number" name="edit_id" value="${data[i]['id']}" style= "display:none">
+                        <button type="submit">update</button> 
+                    </form>
+                </div>`;
+
+                lista.appendChild(li)
+                
+            };
+        };
+
+
+        function update_row(id){
+            form_to_update = document.getElementById(`edit_form_${id}`)
+            form_to_update.style.display = 'block'
+        }
+
+
+
+        function delete_row(id) {
+            fetch('http://127.0.0.1:5000/eliminar_datos', {
+                method: 'POST', // Método HTTP
+                headers: {
+                    'Content-Type': 'application/json' // Tipo de contenido
+                },
+                body: JSON.stringify({ id: id }) // Convertir objeto a JSON
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    getData()
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+        }
+
+
+    </script>
+</body>
+
+</html>
